@@ -1,14 +1,17 @@
 import argparse
+import re
+
 from goose3 import Goose
 from goose3.text import StopWordsChinese
-import re
-import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
 
 class extractor:
     def __init__(self):
         self.g_cn = Goose({'stopwords_class': StopWordsChinese})
         self.g_en = Goose()
-        pass
+        self.headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 
     def __contains_chinese(self, text):
         pattern = re.compile(r'[\u4e00-\u9fff]')  # Range for Chinese characters
@@ -16,17 +19,24 @@ class extractor:
 
     def __get_html(self, url):
         try:
-            response = requests.get(url)
-            response.raise_for_status()  # Raise an exception for bad status codes
-            return response.text  # Return the raw HTML content
-        except requests.RequestException as e:
+            options = Options()
+            options.add_argument('--headless')
+            options.add_argument('--disable-gpu')
+            options.add_argument('--no-sandbox')
+            options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+            driver = webdriver.Chrome(options=options)
+
+            driver.get(url)
+            page_source = driver.page_source
+            driver.quit()
+            return page_source  # Return the raw HTML content
+        except Exception as e:
             print(f"Failed to retrieve HTML: {e}")
             return None
 
     def url(self, url):
         html_string = self.__get_html(url)
         return self.html(html_string)
-        pass
 
     def html(self, html_string):
         html_string = html_string.strip(" \n")
