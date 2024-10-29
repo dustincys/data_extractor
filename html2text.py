@@ -72,7 +72,7 @@ class Extractor:
             ],
             model="gpt-4o-mini",
         )
-        completion_text = response.choices[0].message['content']
+        completion_text = response.choices[0].message.content
         return completion_text
 
 def main():
