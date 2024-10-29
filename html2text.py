@@ -58,7 +58,7 @@ class Extractor:
             html_string = file.read()
             return self.html(html_string = html_string)
     def ai_summary(self, text):
-        client = OpenAI(api_key = self.apikey)
+        client = OpenAI(api_key = self.apiKey)
         response = client.chat.completions.create(
             messages=[
                 {
@@ -80,7 +80,7 @@ def main():
     parser.add_argument('--string', dest='inString', default = "", help='input string')
     parser.add_argument('--file', dest='inFile', default = "", help='input string File')
     parser.add_argument('--url', dest='inURL', default = "", help='input URL')
-    parser.add_argument('--apikey', dest='apiKey', default = "", help='openai api key')
+    parser.add_argument('--apiKey', dest='apiKey', default = "", help='openai api key')
     parser.add_argument('--summary', dest='summary', action='store_true', help='to summary')
 
     args = parser.parse_args()
@@ -98,7 +98,7 @@ def main():
     elif inURL != "":
         reString = e.url(inURL)
 
-    if arg.summary:
+    if args.summary:
         reString = e.ai_summary(reString)
 
     print(reString)
